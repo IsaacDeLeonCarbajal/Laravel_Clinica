@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Consulta;
 use App\Models\Doctor;
+use App\Models\Especialidad;
 use App\Models\Paciente;
 use Illuminate\Http\Request;
 
@@ -13,25 +14,23 @@ class ConsultaController extends Controller
     public function index(Request $request)
     {
         if ($request->paciente) { //Si se quieren buscar las consultas hechas por un paciente
-            $consultas = Consulta::where('paciente_id', $request->paciente)->orderBy('doctor_id', 'asc')->orderBy('fecha', 'asc')->paginate();
+            $consultas = Consulta::join('Doctores', 'Doctores.id', '=', 'Consultas.doctor_id')->where('paciente_id', $request->paciente)->orderBy('cedula', 'asc')->orderBy('fecha', 'asc')->paginate();
         } else if ($request->doctor) { //Si se quieren buscar las consultas hechas por un doctor
-            $consultas = Consulta::where('doctor_id', $request->doctor)->orderBy('paciente_id', 'asc')->orderBy('fecha', 'asc')->paginate();
+            $consultas = Consulta::join('Pacientes', 'Pacientes.id', '=', 'Consultas.paciente_id')->where('doctor_id', $request->doctor)->orderBy('nss', 'asc')->orderBy('fecha', 'asc')->paginate();
         } else { //Si se quieren buscar todas las consultas
-            $consultas = Consulta::orderBy('paciente_id', 'asc')->orderBy('fecha', 'asc')->paginate();
+            $consultas = Consulta::join('Pacientes', 'Pacientes.id', '=', 'Consultas.paciente_id')->orderBy('nss', 'asc')->orderBy('fecha', 'asc')->paginate();
         }
 
-        $paciente = $request->paciente;
-        $doctor = $request->doctor;
-
-        return view('consultas.index', compact('consultas', 'paciente', 'doctor'));
+        return view('consultas.index', compact('consultas'));
     }
 
-    public function create(Request $request)
+    public function create()
     {
+        $especialidades = Especialidad::all();
         $pacientes = Paciente::select('id', 'nss', 'nombre', 'apellido_paterno', 'apellido_materno')->orderBy('nss', 'asc')->get();
-        $doctores = Doctor::select('id', 'cedula', 'nombre', 'apellido_paterno', 'apellido_materno')->orderBy('cedula', 'asc')->get();
+        $doctores = Doctor::select('id', 'cedula', 'nombre', 'apellido_paterno', 'apellido_materno', 'especialidad_id')->orderBy('cedula', 'asc')->get();
 
-        return view('consultas.create', compact('pacientes', 'doctores'));
+        return view('consultas.create', compact('especialidades', 'pacientes', 'doctores'));
     }
 
     public function store(Request $request)

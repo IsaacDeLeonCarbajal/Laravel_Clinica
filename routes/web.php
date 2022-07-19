@@ -54,6 +54,8 @@ Route::controller(DoctorController::class)->group(function () {
     Route::put('/doctores/{doctor}', 'update')->name('doctores.update');
 
     Route::delete('/doctores/{doctor}', 'destroy')->name('doctores.destroy');
+
+    Route::post('/doctores/por_especialidad', 'doctoresPorEspecialidad')->name('doctores.por_especialidad');
 });
 
 Route::controller(ConsultaController::class)->group(function () {

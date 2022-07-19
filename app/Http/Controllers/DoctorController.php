@@ -64,9 +64,19 @@ class DoctorController extends Controller
         return redirect()->route('doctores.index');
     }
 
-    public function destroy(Doctor $doctor) {
+    public function destroy(Doctor $doctor)
+    {
         $doctor->delete();
 
         return redirect()->route('doctores.index');
+    }
+
+    public function doctoresPorEspecialidad(Request $request)
+    {
+        if (isset($request->especialidad_id)) {
+            return Doctor::where('especialidad_id', $request->especialidad_id)->orderBy('cedula', 'asc')->get();
+        } else {
+            return "id de especialidad inválido";
+        }
     }
 }
