@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Genero;
 use App\Models\Paciente;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PacienteController extends Controller
 {
@@ -15,11 +17,20 @@ class PacienteController extends Controller
 
     public function create()
     {
-        return view('pacientes.create');
+        return view('pacientes.create', ['generos' => Genero::select('id', 'genero')->get()]);
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'nss' => 'required | max:15',
+            'nombre' => 'required | max:30',
+            'apellido_paterno' => 'required | max:30',
+            'apellido_materno' => 'required | max:30',
+            'telefono' => 'required | max:20', 
+            'genero_id' => ['required', Rule::in(Genero::select('id')->pluck('id'))]
+        ]);
+
         $paciente = new Paciente();
 
         $paciente->nss = $request->nss;
@@ -41,11 +52,21 @@ class PacienteController extends Controller
 
     public function edit(Paciente $paciente)
     {
-        return view('pacientes.edit', compact('paciente'));
+        $generos = Genero::select('id', 'genero')->get();
+        return view('pacientes.edit', compact('paciente', 'generos'));
     }
 
     public function update(Paciente $paciente, Request $request)
     {
+        $request->validate([
+            'nss' => 'max:15',
+            'nombre' => 'required | max:30',
+            'apellido_paterno' => 'required | max:30',
+            'apellido_materno' => 'required | max:30',
+            'telefono' => 'required | max:20', 
+            'genero_id' => ['required', Rule::in(Genero::select('id')->pluck('id'))]
+        ]);
+
         $paciente->nombre = $request->nombre;
         $paciente->apellido_paterno = $request->apellido_paterno;
         $paciente->apellido_materno = $request->apellido_materno;

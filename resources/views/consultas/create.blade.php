@@ -42,17 +42,35 @@
 
             <div class="col mb-3">
                 <label class="form-text">Padecimiento</label>
-                <input class="form-control" name="padecimiento" type="text">
+                <input class="form-control" name="padecimiento" type="text" value="{{ old('padecimiento') }}">
+
+                @error('padecimiento')
+                    @component('layouts.alerta')
+                        @slot('message', $message)
+                    @endcomponent
+                @enderror
             </div>
 
             <div class="col mb-3">
                 <label class="form-text">Tratamiento</label>
-                <input class="form-control" name="tratamiento" type="text">
+                <input class="form-control" name="tratamiento" type="text" value="{{ old('tratamiento') }}">
+
+                @error('tratamiento')
+                    @component('layouts.alerta')
+                        @slot('message', $message)
+                    @endcomponent
+                @enderror
             </div>
 
             <div class="col mb-3">
                 <label class="form-text">Fecha</label>
-                <input class="form-control" name="fecha" type="date">
+                <input class="form-control" name="fecha" type="date" value="{{ old('fecha') }}">
+
+                @error('fecha')
+                    @component('layouts.alerta')
+                        @slot('message', $message)
+                    @endcomponent
+                @enderror
             </div>
         </div>
 

@@ -9,6 +9,7 @@ use App\Models\Especialidad;
 use App\Models\Genero;
 use App\Models\Paciente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -75,10 +76,9 @@ Route::controller(ConsultaController::class)->group(function () {
 });
 
 Route::get('/tests', function(Request $r) {
-    // $registro = Especialidad::find(10);
+    $registro = Especialidad::select('id')->pluck('id');
 
-
-    return route('doctores.index');
+    return $registro;
 });
 
 Route::get('/faker_test', function() {

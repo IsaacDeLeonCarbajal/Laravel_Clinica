@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Models\Especialidad;
+use App\Models\Genero;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DoctorController extends Controller
 {
@@ -16,11 +18,22 @@ class DoctorController extends Controller
 
     public function create()
     {
-        return view('doctores.create', ['especialidades' => Especialidad::select('id', 'especialidad')->get()]);
+        return view('doctores.create', ['generos' => Genero::select('id', 'genero')->get(), 'especialidades' => Especialidad::select('id', 'especialidad')->get()]);
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'cedula' => 'required | max:15',
+            'nombre' => 'required | max:30',
+            'apellido_paterno' => 'required | max:30',
+            'apellido_materno' => 'required | max:30',
+            'telefono' => 'required | max:20',
+            'sueldo' => 'required | numeric',
+            'genero_id' => ['required', Rule::in(Genero::select('id')->pluck('id'))],
+            'especialidad_id' => ['required', Rule::in(Especialidad::select('id')->pluck('id'))]
+        ]);
+
         $doctor = new Doctor();
 
         $doctor->cedula = $request->cedula;
@@ -45,12 +58,24 @@ class DoctorController extends Controller
     public function edit(Doctor $doctor)
     {
         $especialidades = Especialidad::select('id', 'especialidad')->get();
+        $generos = Genero::select('id', 'genero')->get();
 
-        return view('doctores.edit', compact('doctor', 'especialidades'));
+        return view('doctores.edit', compact('doctor', 'especialidades', 'generos'));
     }
 
     public function update(Doctor $doctor, Request $request)
     {
+        $request->validate([
+            'cedula' => 'max:15',
+            'nombre' => 'required | max:30',
+            'apellido_paterno' => 'required | max:30',
+            'apellido_materno' => 'required | max:30',
+            'telefono' => 'required | max:20',
+            'sueldo' => 'required | numeric',
+            'genero_id' => ['required', Rule::in(Genero::select('id')->pluck('id'))],
+            'especialidad_id' => ['required', Rule::in(Especialidad::select('id')->pluck('id'))]
+        ]);
+
         $doctor->nombre = $request->nombre;
         $doctor->apellido_paterno = $request->apellido_paterno;
         $doctor->apellido_materno = $request->apellido_materno;

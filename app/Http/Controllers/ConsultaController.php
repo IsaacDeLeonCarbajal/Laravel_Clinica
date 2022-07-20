@@ -7,6 +7,7 @@ use App\Models\Doctor;
 use App\Models\Especialidad;
 use App\Models\Paciente;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ConsultaController extends Controller
 {
@@ -35,6 +36,14 @@ class ConsultaController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'paciente_id' => ['required', 'numeric', Rule::in(Doctor::select('id')->pluck('id'))],
+            'doctor_id' => ['required', 'numeric', Rule::in(Paciente::select('id')->pluck('id'))],
+            'fecha' => 'required | before_or_equal:' . date('Y-m-d'),
+            'padecimiento' => 'required | max:100',
+            'tratamiento' => 'required | max:100'
+        ]);
+
         $consulta = new Consulta();
 
         $consulta->paciente_id = $request->paciente_id;
